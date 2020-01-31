@@ -1,0 +1,5 @@
+{
+	"ClientAdd":		"Enabled",
+	"ContactAdd":		"Enabled",
+	"ContactDelete":	"Disabled"
+}
