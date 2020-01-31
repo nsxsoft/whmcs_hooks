@@ -28,44 +28,46 @@ add_hook('ClientAdd', 1, function($vars) {
 	$json_file = '/var/www/pixelxen.store/htdocs/includes/hooks/whmcs_hooks_switches.json';
 	$strJsonFileContents = file_get_contents($json_file);
 	$switches = json_decode($strJsonFileContents, true);
-	if($switches['ClientAdd'] == 'Enabled')
+	$hook_switches = $switches['ClientAdd'];
+
+	// Get 'Client Id' from WHMCS database
+	$dbsocket = "/var/run/mysqld/mysqld.sock";
+	$dbname   = "store";
+	$username = "whmcs_hook";
+	$query = "
+	  SELECT value
+	  FROM tblcustomfieldsvalues
+	  WHERE (
+	    relid = (
+	      SELECT id
+	      FROM tblclients
+	      WHERE companyname = '" . $vars['companyname'] . "'
+	    ) AND
+	    fieldid = (
+	      SELECT id
+	      FROM tblcustomfields
+	      WHERE fieldname = 'Client ID'
+	    )
+	  )";
+	
+	try {
+		//$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+		$conn = new PDO("mysql:unix_socket=$dbsocket;dbname=$dbname", $username);
+
+		// set the PDO error mode to exception
+		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	      
+		// query
+		$stmt = $conn->query($query);
+		$row = $stmt->fetch();
+		$company_id = $row['value'];
+	}
+	catch(PDOException $e) { $e = "Connection failed: " . $e->getMessage(); }
+	$conn = null;
+	
+
+	if($hook_switches['OTRS'] == 'Enabled')
 	{
-		// Get 'Client Id' from WHMCS database
-		$dbsocket = "/var/run/mysqld/mysqld.sock";
-		$dbname   = "store";
-		$username = "whmcs_hook";
-		$query = "
-		  SELECT value
-		  FROM tblcustomfieldsvalues
-		  WHERE (
-		    relid = (
-		      SELECT id
-		      FROM tblclients
-		      WHERE companyname = '" . $vars['companyname'] . "'
-		    ) AND
-		    fieldid = (
-		      SELECT id
-		      FROM tblcustomfields
-		      WHERE fieldname = 'Client ID'
-		    )
-		  )";
-		
-		try {
-			//$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-			$conn = new PDO("mysql:unix_socket=$dbsocket;dbname=$dbname", $username);
-	
-			// set the PDO error mode to exception
-			$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		      
-			// query
-			$stmt = $conn->query($query);
-			$row = $stmt->fetch();
-			$company_id = $row['value'];
-		}
-		catch(PDOException $e) { $e = "Connection failed: " . $e->getMessage(); }
-		$conn = null;
-	
-	
 		// Connect the endpoint in pix-otrs with cURL
 		$host = "pix-otrs.pixelxen.rocks";
 		$port = 5000;
@@ -80,10 +82,5 @@ add_hook('ClientAdd', 1, function($vars) {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$output = curl_exec($ch);
 		curl_close ($ch);
-	
-		# TODELETE # Save output to file
-		$fd = fopen("/tmp/whmcs_CustomerCompany", "w");
-		fwrite($fd, $full_url . "\n" . $output);
-		fclose($fd);
 	}
   });

@@ -1,5 +1,14 @@
 {
-	"ClientAdd":		"Enabled",
-	"ContactAdd":		"Enabled",
-	"ContactDelete":	"Disabled"
+	"ClientAdd": {
+		"Grafana":	"Disabled",
+		"OTRS":		"Enabled"
+	},
+	"ContactAdd": {
+		"Grafana":	"Disabled",
+		"OTRS":		"Enabled"
+	},
+	"ContactDelete": {
+		"Grafana":	"Disabled",
+		"OTRS":		"Disabled"
+	}
 }
