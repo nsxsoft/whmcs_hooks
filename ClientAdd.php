@@ -66,6 +66,35 @@ add_hook('ClientAdd', 1, function($vars) {
 	$conn = null;
 	
 
+	// Grafana
+	if($hook_switches['Grafana'] == 'Enabled')
+	{
+		$host =		'https://grafana.pixelxen.cloud';
+		$port =		'3000';
+		$cred =		"admin:pixelinside2011";
+		$endpoint =	"/api/admin/users";
+		$headers = 	array("Content-Type: application/json");
+		$data = "{
+		  \"name\":	\"" . $vars['firstname'] ." " . $vars['lastname'] . "\",
+		  \"email\":	\"" . $vars['email'] . "\",
+		  \"login\":	\"" . $vars['email'] . "\",
+		  \"password\":	\"changeme01\"
+		}";
+		
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $host . ":" . $port . $endpoint);
+		curl_setopt($ch, CURLOPT_USERPWD, $cred);
+		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($ch, CURLOPT_POST, True);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, False);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, True);
+		$output = curl_exec($ch);
+		curl_close ($ch);
+	}
+
+	// OTRS
 	if($hook_switches['OTRS'] == 'Enabled')
 	{
 		// Connect the endpoint in pix-otrs with cURL

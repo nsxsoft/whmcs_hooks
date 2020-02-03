@@ -1,6 +1,6 @@
 {
 	"ClientAdd": {
-		"Grafana":	"Disabled",
+		"Grafana":	"Enabled",
 		"OTRS":		"Enabled"
 	},
 	"ContactAdd": {
