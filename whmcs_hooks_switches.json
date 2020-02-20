@@ -1,14 +1,18 @@
 {
+	"ClientChangePassword": {
+		"Grafana": 	"Enabled",
+		"OTRS":		"Enabled"
+	},
 	"ClientAdd": {
 		"Grafana":	"Enabled",
 		"OTRS":		"Enabled"
 	},
 	"ContactAdd": {
-		"Grafana":	"Disabled",
+		"Grafana":	"Enabled",
 		"OTRS":		"Enabled"
 	},
-	"ContactDelete": {
-		"Grafana":	"Disabled",
-		"OTRS":		"Disabled"
+	"ContactChangePassword": {
+		"Grafana":	"Enabled",
+		"OTRS":		"Enabled"
 	}
 }
