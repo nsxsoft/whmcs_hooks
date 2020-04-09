@@ -1,0 +1,13 @@
+{
+	"hub": {
+		"host": "pix-flask01.pixelxen.rocks",
+		"port": "5000",
+		"api": "/pixpanel_hub/api/v1.0"
+	},
+	"db": {
+		"host": "localhost",
+		"name": "store",
+		"user": "",
+		"pass": ""
+	}
+}
